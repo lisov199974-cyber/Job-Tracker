@@ -17,7 +17,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(bot_router)
-app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 GOOGLE_CLIENT_ID     = os.environ["GOOGLE_CLIENT_ID"]
