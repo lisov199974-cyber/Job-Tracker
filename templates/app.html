@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Tracker</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: #111113; color: #e8e8ec; min-height: 100vh; }
+
+.screen { display: none; flex-direction: column; min-height: 100vh; }
+.screen.active { display: flex; }
+
+.header {
+  background: #1a1a1f; padding: 14px 16px;
+  border-bottom: 0.5px solid #2a2a2e;
+  display: flex; align-items: center; gap: 10px;
+  position: sticky; top: 0; z-index: 10;
+}
+.back-btn { background: none; border: none; color: #7a7aaa; font-size: 22px; cursor: pointer; padding: 0 8px 0 0; }
+.header-avatar { width: 32px; height: 32px; border-radius: 50%; background: #3d3aaa; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; color: #cccaf8; flex-shrink: 0; }
+.header-title { font-size: 14px; font-weight: 500; color: #e8e8ec; }
+.header-sub   { font-size: 11px; color: #666672; margin-top: 1px; }
+
+.content { flex: 1; padding: 14px; }
+
+.section-label { font-size: 10px; font-weight: 500; color: #555560; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+
+.stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.stat-card { background: #1a1a1f; border-radius: 10px; padding: 10px 8px; text-align: center; }
+.stat-num { font-size: 20px; font-weight: 500; }
+.stat-num.green { color: #5dcaa5; }
+.stat-num.red   { color: #f09595; }
+.stat-num.muted { color: #888795; }
+.stat-label { font-size: 9px; color: #555560; margin-top: 3px; }
+
+.bar-section { margin-bottom: 14px; }
+.bar-label { display: flex; justify-content: space-between; font-size: 9px; color: #555560; margin-bottom: 4px; }
+.bar-bg { background: #1e1e24; border-radius: 4px; height: 5px; overflow: hidden; margin-bottom: 6px; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+
+.table-header { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(0,1fr) minmax(0,1.1fr); gap: 6px; padding: 0 4px 6px; font-size: 9px; color: #555560; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+.row { display: grid; grid-template-columns: minmax(0,1.8fr) minmax(0,1fr) minmax(0,1.1fr); gap: 6px; align-items: center; padding: 9px 4px; border-top: 0.5px solid #1e1e24; }
+.company { font-size: 12px; font-weight: 500; color: #d8d8e0; }
+.role    { font-size: 10px; color: #66666f; margin-top: 2px; }
+.salary  { font-size: 11px; color: #888795; }
+
+.badge { font-size: 9px; font-weight: 500; padding: 3px 7px; border-radius: 20px; display: inline-block; white-space: nowrap; }
+.badge.invite { background: #0d3d2e; color: #5dcaa5; }
+.badge.reject { background: #3a1414; color: #f09595; }
+.badge.wait   { background: #1e1e24; color: #666672; }
+
+.fab { position: fixed; bottom: 24px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: #3d3aaa; border: none; color: #cccaf8; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+/* Form */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 10px; font-weight: 500; color: #666672; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+.field input, .field select { width: 100%; background: #1a1a1f; border: 0.5px solid #2a2a2e; border-radius: 10px; padding: 10px 12px; font-size: 13px; color: #d8d8e0; font-family: inherit; outline: none; appearance: none; -webkit-appearance: none; }
+.field input::placeholder { color: #3a3a48; }
+.field input:focus, .field select:focus { border-color: #3d3aaa; }
+.field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23666672'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 30px; cursor: pointer; }
+.field select option { background: #1a1a1f; }
+
+.toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.toggle-btn { background: #1a1a1f; border: 0.5px solid #2a2a2e; border-radius: 10px; padding: 9px 8px; font-size: 11px; color: #666672; cursor: pointer; text-align: center; transition: all 0.15s; }
+.toggle-btn.active-read { background: #0a2a20; border-color: #1d9e75; color: #5dcaa5; }
+.toggle-btn.active-no   { background: #1e1e24; border-color: #3a3a48; color: #888795; }
+.toggle-btn.active-inv  { background: #0a2a20; border-color: #1d9e75; color: #5dcaa5; }
+.toggle-btn.active-rej  { background: #3a1414; border-color: #993c1d; color: #f09595; }
+
+.submit-btn { width: 100%; background: #3d3aaa; color: #cccaf8; border: none; border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 4px; font-family: inherit; }
+.empty-hint { text-align: center; padding: 32px 0; font-size: 12px; color: #3a3a48; line-height: 1.8; }
+.error { border-color: #993c1d !important; }
+</style>
+</head>
+<body>
+
+<!-- MAIN SCREEN -->
+<div class="screen active" id="screen-main">
+  <div class="header">
+    <div class="header-avatar">JT</div>
+    <div>
+      <div class="header-title">Job Tracker</div>
+      <div class="header-sub" id="header-count">Загрузка...</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="section-label">Статистика</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num green" id="cnt-inv">0</div><div class="stat-label">Приглашения</div></div>
+      <div class="stat-card"><div class="stat-num red"   id="cnt-rej">0</div><div class="stat-label">Отказы</div></div>
+      <div class="stat-card"><div class="stat-num muted" id="cnt-wait">0</div><div class="stat-label">Без ответа</div></div>
+    </div>
+    <div class="bar-section">
+      <div class="bar-label"><span>Приглашения</span><span id="pct-inv">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="bar-inv" style="width:0%;background:#5dcaa5"></div></div>
+      <div class="bar-label"><span>Отказы</span><span id="pct-rej">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="bar-rej" style="width:0%;background:#f09595"></div></div>
+      <div class="bar-label"><span>Без ответа</span><span id="pct-wait">0%</span></div>
+      <div class="bar-bg"><div class="bar-fill" id="bar-wait" style="width:0%;background:#3a3a48"></div></div>
+    </div>
+    <div class="section-label">Отклики</div>
+    <div class="table-header">
+      <div>Компания / Должность</div><div>ЗП</div><div>Статус</div>
+    </div>
+    <div id="rows-container"><div class="empty-hint">Загрузка данных...</div></div>
+  </div>
+  <button class="fab" onclick="openForm()">+</button>
+</div>
+
+<!-- FORM SCREEN -->
+<div class="screen" id="screen-form">
+  <div class="header">
+    <button class="back-btn" onclick="goBack()">‹</button>
+    <div>
+      <div class="header-title">Новый отклик</div>
+      <div class="header-sub">Заполни данные</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="field">
+      <label>Компания *</label>
+      <input id="f-company" type="text" placeholder="Название компании" />
+    </div>
+    <div class="field">
+      <label>Должность *</label>
+      <input id="f-role" type="text" placeholder="Product Manager" />
+    </div>
+    <div class="field">
+      <label>Зарплата (₽)</label>
+      <input id="f-salary" type="number" placeholder="200000" />
+    </div>
+    <div class="field">
+      <label>Статус прочтения</label>
+      <div class="toggle-row">
+        <div class="toggle-btn active-read" id="read-yes" onclick="setRead('yes')">Прочитано</div>
+        <div class="toggle-btn"            id="read-no"  onclick="setRead('no')">Не прочитано</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Ответ</label>
+      <div class="toggle-row">
+        <div class="toggle-btn active-no" id="ans-wait" onclick="setAns('wait')">Без ответа</div>
+        <div class="toggle-btn"           id="ans-inv"  onclick="setAns('inv')">Приглашение</div>
+      </div>
+      <div class="toggle-row" style="margin-top:8px">
+        <div class="toggle-btn" id="ans-rej" onclick="setAns('rej')">Отказ</div>
+        <div></div>
+      </div>
+    </div>
+    <button class="submit-btn" id="submit-btn" onclick="submitEntry()">Добавить отклик</button>
+  </div>
+</div>
+
+<script>
+let entries = [];
+let readVal = 'yes';
+let ansVal  = 'wait';
+
+async function loadEntries() {
+  try {
+    const resp = await fetch('/api/entries');
+    entries = await resp.json();
+    renderAll();
+  } catch(e) {
+    document.getElementById('rows-container').innerHTML = '<div class="empty-hint">Ошибка загрузки данных</div>';
+  }
+}
+
+function openForm() {
+  document.getElementById('f-company').value = '';
+  document.getElementById('f-role').value = '';
+  document.getElementById('f-salary').value = '';
+  document.getElementById('f-company').classList.remove('error');
+  document.getElementById('f-role').classList.remove('error');
+  setRead('yes'); setAns('wait');
+  document.getElementById('screen-main').classList.remove('active');
+  document.getElementById('screen-form').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function goBack() {
+  document.getElementById('screen-form').classList.remove('active');
+  document.getElementById('screen-main').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function setRead(v) {
+  readVal = v;
+  document.getElementById('read-yes').className = 'toggle-btn' + (v==='yes' ? ' active-read' : '');
+  document.getElementById('read-no').className  = 'toggle-btn' + (v==='no'  ? ' active-no'  : '');
+}
+
+function setAns(v) {
+  ansVal = v;
+  const map = { wait:'active-no', inv:'active-inv', rej:'active-rej' };
+  ['wait','inv','rej'].forEach(k => {
+    document.getElementById('ans-'+k).className = 'toggle-btn' + (v===k ? ' '+map[k] : '');
+  });
+}
+
+async function submitEntry() {
+  const company = document.getElementById('f-company').value.trim();
+  const role    = document.getElementById('f-role').value.trim();
+  const salary  = document.getElementById('f-salary').value.trim();
+
+  document.getElementById('f-company').classList.toggle('error', !company);
+  document.getElementById('f-role').classList.toggle('error', !role);
+  if (!company || !role) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Сохранение...';
+  btn.disabled = true;
+
+  const statusMap = { wait: 'Без ответа', inv: 'Приглашение', rej: 'Отказ' };
+  const readMap   = { yes: 'Да', no: 'Нет' };
+
+  await fetch('/api/entries', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      company, role,
+      salary: salary ? parseInt(salary).toLocaleString('ru-RU') + ' ₽' : '',
+      read: readMap[readVal],
+      status: statusMap[ansVal],
+    })
+  });
+
+  btn.textContent = 'Добавить отклик';
+  btn.disabled = false;
+
+  await loadEntries();
+  goBack();
+}
+
+function renderAll() {
+  const total = entries.length;
+  const inv  = entries.filter(e => e.status === 'Приглашение').length;
+  const rej  = entries.filter(e => e.status === 'Отказ').length;
+  const wait = entries.filter(e => e.status === 'Без ответа').length;
+
+  document.getElementById('header-count').textContent = total + ' ' + plural(total, 'отклик','отклика','откликов');
+  document.getElementById('cnt-inv').textContent  = inv;
+  document.getElementById('cnt-rej').textContent  = rej;
+  document.getElementById('cnt-wait').textContent = wait;
+
+  const pct = v => total ? Math.round(v / total * 100) : 0;
+  const pi = pct(inv), pr = pct(rej), pw = pct(wait);
+  document.getElementById('pct-inv').textContent  = pi + '%';
+  document.getElementById('pct-rej').textContent  = pr + '%';
+  document.getElementById('pct-wait').textContent = pw + '%';
+  document.getElementById('bar-inv').style.width  = pi + '%';
+  document.getElementById('bar-rej').style.width  = pr + '%';
+  document.getElementById('bar-wait').style.width = pw + '%';
+
+  const container = document.getElementById('rows-container');
+  if (!entries.length) {
+    container.innerHTML = '<div class="empty-hint">Пока нет откликов.<br>Нажми + чтобы добавить первый.</div>';
+    return;
+  }
+  const badgeMap  = { 'Приглашение':'invite', 'Отказ':'reject', 'Без ответа':'wait' };
+  container.innerHTML = [...entries].reverse().map(e => `
+    <div class="row">
+      <div><div class="company">${e.company}</div><div class="role">${e.role}</div></div>
+      <div class="salary">${e.salary || '—'}</div>
+      <div><span class="badge ${badgeMap[e.status] || 'wait'}">${e.status || 'Без ответа'}</span></div>
+    </div>
+  `).join('');
+}
+
+function plural(n, a, b, c) {
+  const m = n % 100;
+  if (m >= 11 && m <= 19) return c;
+  const r = n % 10;
+  if (r === 1) return a;
+  if (r >= 2 && r <= 4) return b;
+  return c;
+}
+
+loadEntries();
+</script>
+</body>
+</html>
