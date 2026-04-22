@@ -120,3 +120,29 @@ async def add_entry(request: Request):
         await refresh_access_token()
         return await add_entry(request)
     return JSONResponse({"ok": True})
+@app.put("/api/entries/{row_index}")
+async def update_entry(row_index: int, request: Request):
+    if "access_token" not in token_store:
+        raise HTTPException(401, "Not authenticated")
+    body = await request.json()
+    field = body.get("field")
+    value = body.get("value")
+    token = token_store["access_token"]
+    
+    col_map = {"company": "A", "role": "B", "salary": "C", "read": "D", "status": "E"}
+    col = col_map.get(field)
+    if not col:
+        raise HTTPException(400, "Invalid field")
+    
+    sheet_row = row_index + 2
+    async with httpx.AsyncClient() as client:
+        resp = await client.put(
+            f"https://sheets.googleapis.com/v4/spreadsheets/{SHEET_ID}/values/Отклики!{col}{sheet_row}"
+            f"?valueInputOption=RAW",
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+            json={"values": [[value]]}
+        )
+    if resp.status_code == 401:
+        await refresh_access_token()
+        return await update_entry(row_index, request)
+    return JSONResponse({"ok": True})
