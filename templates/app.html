@@ -30,7 +30,7 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 .qs-num.gray  { color: #bbb; }
 .qs-label { font-size: 10px; color: #bbb; margin-top: 3px; }
 
-.section-header { padding: 0 20px; margin-bottom: 10px; }
+.section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 10px; }
 .section-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
 
 .card { background: #fff; border-radius: 18px; margin: 0 16px 8px; padding: 14px 16px; }
@@ -39,23 +39,21 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 .card-info { flex: 1; min-width: 0; }
 .card-company { font-size: 14px; font-weight: 500; color: #1a1a1a; }
 .card-role { font-size: 11px; color: #bbb; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.card-salary { font-size: 13px; font-weight: 500; color: #1a1a1a; flex-shrink: 0; }
+.card-right { flex-shrink: 0; text-align: right; }
+.card-salary { font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.card-date { font-size: 11px; font-weight: 500; margin-top: 3px; }
+.card-date.fresh  { color: #bbb; }
+.card-date.yellow { color: #b07d00; }
+.card-date.orange { color: #c05c00; }
+.card-date.red    { color: #e24b4a; }
 
-.card-bottom { display: flex; align-items: center; justify-content: space-between; }
 .card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
-
 .badge { font-size: 11px; font-weight: 500; padding: 5px 10px; border-radius: 20px; display: inline-block; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .badge.invite { background: #e1f5ee; color: #0f6e56; }
 .badge.reject { background: #fcebeb; color: #a32d2d; }
 .badge.wait   { background: #f1efe8; color: #888; }
 .badge.read   { background: #f0f0f0; color: #888; }
 .badge.unread { background: #fff8e6; color: #b07d00; }
-
-.days-badge { font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 20px; flex-shrink: 0; }
-.days-ok     { background: #f1efe8; color: #aaa; }
-.days-yellow { background: #fff8e1; color: #b07d00; }
-.days-orange { background: #fff0e0; color: #c05c00; }
-.days-red    { background: #fcebeb; color: #a32d2d; }
 
 .sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; }
 .sheet-overlay.open { display: block; }
@@ -201,23 +199,21 @@ const months = ['январь','февраль','март','апрель','ма�
 const now = new Date();
 document.getElementById('hero-month').textContent = months[now.getMonth()] + ' ' + now.getFullYear();
 
-function getDaysAgo(dateStr) {
+function daysSince(dateStr) {
   if (!dateStr) return null;
   const parts = dateStr.split('.');
   if (parts.length !== 3) return null;
   const d = new Date(parseInt(parts[2]), parseInt(parts[1]) - 1, parseInt(parts[0]));
-  const diff = Math.floor((new Date() - d) / (1000 * 60 * 60 * 24));
-  return diff;
+  const diff = Date.now() - d.getTime();
+  return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
 
-function getDaysBadge(days) {
-  if (days === null) return '';
-  let cls, label;
-  if (days >= 10)     { cls = 'days-red';    label = days + 'д 🔴'; }
-  else if (days >= 7) { cls = 'days-orange'; label = days + 'д 🟠'; }
-  else if (days >= 3) { cls = 'days-yellow'; label = days + 'д 🟡'; }
-  else                { cls = 'days-ok';     label = days + 'д'; }
-  return `<span class="days-badge ${cls}">${label}</span>`;
+function dateColorClass(days) {
+  if (days === null) return 'fresh';
+  if (days >= 10) return 'red';
+  if (days >= 7)  return 'orange';
+  if (days >= 3)  return 'yellow';
+  return 'fresh';
 }
 
 async function loadEntries() {
@@ -393,12 +389,14 @@ function renderAll() {
   }
 
   const badgeMap = { 'Приглашение':'invite', 'Отказ':'reject', 'Без ответа':'wait' };
+  const isWaiting = e => e.status === 'Без ответа';
 
-  container.innerHTML = [...entries].reverse().map((e, i) => {
-    const realIndex = entries.length - 1 - i;
-    const isWaiting = e.status === 'Без ответа';
-    const days = isWaiting ? getDaysAgo(e.date) : null;
-    const daysBadge = isWaiting ? getDaysBadge(days) : '';
+  container.innerHTML = [...entries].map((e, realIndex) => {
+    const days = daysSince(e.date);
+    const colorClass = isWaiting(e) ? dateColorClass(days) : 'fresh';
+    const dateHtml = e.date
+      ? `<div class="card-date ${colorClass}">${e.date}</div>`
+      : '';
 
     return `
     <div class="card">
@@ -408,21 +406,21 @@ function renderAll() {
           <div class="card-company">${e.company}</div>
           <div class="card-role">${e.role}</div>
         </div>
-        <div class="card-salary">${e.salary || '—'}</div>
-      </div>
-      <div class="card-bottom">
-        <div class="card-badges">
-          <span class="badge ${badgeMap[e.status] || 'wait'}" onclick="openStatusSheet(${realIndex})">
-            ${e.status || 'Без ответа'} ▾
-          </span>
-          <span class="badge ${e.read === 'Да' ? 'read' : 'unread'}" onclick="openReadSheet(${realIndex})">
-            ${e.read === 'Да' ? 'Прочитано' : 'Не прочитано'} ▾
-          </span>
+        <div class="card-right">
+          <div class="card-salary">${e.salary || '—'}</div>
+          ${dateHtml}
         </div>
-        ${daysBadge}
+      </div>
+      <div class="card-badges">
+        <span class="badge ${badgeMap[e.status] || 'wait'}" onclick="openStatusSheet(${realIndex})">
+          ${e.status || 'Без ответа'} ▾
+        </span>
+        <span class="badge ${e.read === 'Да' ? 'read' : 'unread'}" onclick="openReadSheet(${realIndex})">
+          ${e.read === 'Да' ? 'Прочитано' : 'Не прочитано'} ▾
+        </span>
       </div>
     </div>`;
-  }).join('');
+  }).reverse().join('');
 }
 
 loadEntries();
