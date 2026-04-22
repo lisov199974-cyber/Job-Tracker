@@ -246,7 +246,9 @@ function showStatusDropdown(btn, rowIndex) {
   btn.parentElement.appendChild(dd);
   activeDropdown = dd;
 
-  setTimeout(() => document.addEventListener('click', closeDropdown, { once: true }), 0);
+  setTimeout(() => document.addEventListener('click', function handler(e) {
+  if (!dd.contains(e.target)) { closeDropdown(); document.removeEventListener('click', handler); }
+}), 0);
 }
 
 function showReadDropdown(btn, rowIndex) {
