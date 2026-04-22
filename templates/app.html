@@ -13,7 +13,7 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 .screen.active { display: flex; }
 
 .header { padding: 52px 20px 12px; background: #f5f5f0; }
-.greeting { font-size: 12px; color: #999; margin-bottom: 2px; font-weight: 400; }
+.greeting { font-size: 12px; color: #999; margin-bottom: 2px; }
 .username { font-size: 22px; font-weight: 600; color: #1a1a1a; }
 
 .hero-card { margin: 4px 16px 14px; background: #1a1a1a; border-radius: 22px; padding: 22px; }
@@ -28,7 +28,7 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 .qs-num.green { color: #1d9e75; }
 .qs-num.red   { color: #e24b4a; }
 .qs-num.gray  { color: #bbb; }
-.qs-label { font-size: 10px; color: #bbb; margin-top: 3px; font-weight: 400; }
+.qs-label { font-size: 10px; color: #bbb; margin-top: 3px; }
 
 .section-header { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 10px; }
 .section-title { font-size: 15px; font-weight: 600; color: #1a1a1a; }
@@ -38,29 +38,30 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 .card-icon { width: 40px; height: 40px; border-radius: 12px; background: #f5f5f0; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: #888; flex-shrink: 0; }
 .card-info { flex: 1; min-width: 0; }
 .card-company { font-size: 14px; font-weight: 500; color: #1a1a1a; }
-.card-role { font-size: 11px; color: #bbb; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 400; }
-.card-salary { font-size: 13px; font-weight: 500; color: #1a1a1a; text-align: right; flex-shrink: 0; }
+.card-role { font-size: 11px; color: #bbb; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-salary { font-size: 13px; font-weight: 500; color: #1a1a1a; flex-shrink: 0; }
 
-.card-badges { display: flex; gap: 6px; position: relative; }
+.card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
 
-.badge { font-size: 11px; font-weight: 500; padding: 5px 10px; border-radius: 20px; display: inline-block; cursor: pointer; user-select: none; }
+.badge { font-size: 11px; font-weight: 500; padding: 5px 10px; border-radius: 20px; display: inline-block; cursor: pointer; user-select: none; -webkit-user-select: none; }
 .badge.invite { background: #e1f5ee; color: #0f6e56; }
 .badge.reject { background: #fcebeb; color: #a32d2d; }
 .badge.wait   { background: #f1efe8; color: #888; }
 .badge.read   { background: #f0f0f0; color: #888; }
 .badge.unread { background: #fff8e6; color: #b07d00; }
 
-.dropdown { position: absolute; top: calc(100% + 6px); left: 0; background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.12); z-index: 100; overflow: hidden; min-width: 150px; }
-.dropdown-item { padding: 11px 16px; font-size: 13px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-.dropdown-item:hover { background: #f5f5f0; }
-.dropdown-item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.dot-green { background: #1d9e75; }
-.dot-red   { background: #e24b4a; }
-.dot-gray  { background: #bbb; }
+/* Bottom sheet dropdown */
+.sheet-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 200; }
+.sheet-overlay.open { display: block; }
+.bottom-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-radius: 22px 22px 0 0; padding: 12px 0 40px; z-index: 201; transform: translateY(100%); transition: transform 0.25s cubic-bezier(.4,0,.2,1); }
+.bottom-sheet.open { transform: translateY(0); }
+.sheet-handle { width: 36px; height: 4px; background: #e0e0e0; border-radius: 2px; margin: 0 auto 16px; }
+.sheet-title { font-size: 12px; color: #bbb; font-weight: 500; text-align: center; margin-bottom: 8px; letter-spacing: 0.05em; text-transform: uppercase; }
+.sheet-item { display: flex; align-items: center; gap: 12px; padding: 14px 24px; cursor: pointer; font-size: 15px; font-weight: 500; color: #1a1a1a; }
+.sheet-item:active { background: #f5f5f0; }
+.sheet-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-.overlay { position: fixed; inset: 0; z-index: 50; }
-
-.empty-hint { text-align: center; padding: 40px 20px; font-size: 13px; color: #ccc; line-height: 1.8; font-weight: 400; }
+.empty-hint { text-align: center; padding: 40px 20px; font-size: 13px; color: #ccc; line-height: 1.8; }
 
 .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 0.5px solid #eee; display: flex; padding: 10px 0 24px; z-index: 100; justify-content: center; }
 .fab-btn { width: 50px; height: 50px; border-radius: 50%; background: #1a1a1a; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; }
@@ -73,17 +74,17 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 
 .field { margin-bottom: 12px; position: relative; }
 .field label { display: block; font-size: 11px; font-weight: 500; color: #999; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
-.field input { width: 100%; background: #fff; border: none; border-radius: 14px; padding: 13px 16px; font-size: 14px; color: #1a1a1a; font-family: 'Inter', sans-serif; outline: none; font-weight: 400; }
+.field input { width: 100%; background: #fff; border: none; border-radius: 14px; padding: 13px 16px; font-size: 14px; color: #1a1a1a; font-family: 'Inter', sans-serif; outline: none; }
 .field input::placeholder { color: #ccc; }
 .field input:focus { box-shadow: 0 0 0 2px #1a1a1a22; }
 .field input.error { box-shadow: 0 0 0 2px #e24b4a44; }
 
 .autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border-radius: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.1); z-index: 200; overflow: hidden; margin-top: 4px; }
-.autocomplete-item { padding: 11px 16px; font-size: 13px; font-weight: 400; cursor: pointer; color: #1a1a1a; }
-.autocomplete-item:hover { background: #f5f5f0; }
+.autocomplete-item { padding: 11px 16px; font-size: 13px; cursor: pointer; color: #1a1a1a; }
+.autocomplete-item:active { background: #f5f5f0; }
 
 .toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.toggle-btn { background: #fff; border: none; border-radius: 14px; padding: 12px 8px; font-size: 12px; font-weight: 500; color: #bbb; cursor: pointer; text-align: center; font-family: 'Inter', sans-serif; transition: all 0.15s; }
+.toggle-btn { background: #fff; border: none; border-radius: 14px; padding: 12px 8px; font-size: 12px; font-weight: 500; color: #bbb; cursor: pointer; text-align: center; font-family: 'Inter', sans-serif; }
 .toggle-btn.active-read { background: #e1f5ee; color: #0f6e56; }
 .toggle-btn.active-no   { background: #f1efe8; color: #888; }
 .toggle-btn.active-inv  { background: #e1f5ee; color: #0f6e56; }
@@ -93,6 +94,14 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 </style>
 </head>
 <body>
+
+<!-- BOTTOM SHEET -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="sheet-title"></div>
+  <div id="sheet-items"></div>
+</div>
 
 <!-- MAIN SCREEN -->
 <div class="screen active" id="screen-main">
@@ -135,17 +144,16 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
     <button class="back-btn" onclick="goBack()">‹</button>
     <div class="form-title">Новый отклик</div>
   </div>
-
   <div class="form-content">
     <div class="field">
       <label>Компания *</label>
       <input id="f-company" type="text" placeholder="Название компании" />
     </div>
-    <div class="field" id="role-field">
+    <div class="field">
       <label>Должность *</label>
       <input id="f-role" type="text" placeholder="Product Manager" autocomplete="off"
         oninput="showAutocomplete(this.value)"
-        onblur="setTimeout(hideAutocomplete, 150)" />
+        onblur="setTimeout(hideAutocomplete, 200)" />
       <div class="autocomplete" id="autocomplete" style="display:none;"></div>
     </div>
     <div class="field">
@@ -172,7 +180,6 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
     </div>
     <button class="submit-btn" id="submit-btn" onclick="submitEntry()">Добавить отклик</button>
   </div>
-
   <div class="bottom-nav">
     <button class="fab-btn" style="background:#eee;" onclick="goBack()">
       <span class="fab-plus" style="color:#999;">✕</span>
@@ -184,7 +191,6 @@ body { font-family: 'Inter', sans-serif; background: #f5f5f0; color: #1a1a1a; mi
 let entries = [];
 let readVal = 'yes';
 let ansVal  = 'wait';
-let activeDropdown = null;
 
 const months = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
 const now = new Date();
@@ -201,17 +207,16 @@ async function loadEntries() {
 }
 
 function getRoles() {
-  const roles = [...new Set(entries.map(e => e.role).filter(Boolean))];
-  return roles;
+  return [...new Set(entries.map(e => e.role).filter(Boolean))];
 }
 
 function showAutocomplete(val) {
   const ac = document.getElementById('autocomplete');
-  if (!val || val.length < 1) { ac.style.display = 'none'; return; }
+  if (!val) { ac.style.display = 'none'; return; }
   const matches = getRoles().filter(r => r.toLowerCase().includes(val.toLowerCase()) && r.toLowerCase() !== val.toLowerCase());
   if (!matches.length) { ac.style.display = 'none'; return; }
   ac.innerHTML = matches.slice(0, 5).map(r =>
-    `<div class="autocomplete-item" onmousedown="selectRole('${r.replace(/'/g, "\\'")}')">${r}</div>`
+    `<div class="autocomplete-item" onmousedown="selectRole(this)">${r}</div>`
   ).join('');
   ac.style.display = 'block';
 }
@@ -220,63 +225,47 @@ function hideAutocomplete() {
   document.getElementById('autocomplete').style.display = 'none';
 }
 
-function selectRole(role) {
-  document.getElementById('f-role').value = role;
+function selectRole(el) {
+  document.getElementById('f-role').value = el.textContent;
   hideAutocomplete();
 }
 
-function closeDropdown() {
-  if (activeDropdown) { activeDropdown.remove(); activeDropdown = null; }
+function openSheet(title, items) {
+  document.getElementById('sheet-title').textContent = title;
+  document.getElementById('sheet-items').innerHTML = items.map(item => `
+    <div class="sheet-item" onclick="${item.action}">
+      ${item.dot ? `<span class="sheet-dot" style="background:${item.dot}"></span>` : ''}
+      ${item.label}
+    </div>
+  `).join('');
+  document.getElementById('sheet-overlay').classList.add('open');
+  document.getElementById('bottom-sheet').classList.add('open');
 }
 
-function showStatusDropdown(btn, rowIndex) {
-  closeDropdown();
-  const options = [
-    { label: 'Без ответа', cls: 'dot-gray',  val: 'Без ответа' },
-    { label: 'Приглашение', cls: 'dot-green', val: 'Приглашение' },
-    { label: 'Отказ',       cls: 'dot-red',   val: 'Отказ' },
-  ];
-  const dd = document.createElement('div');
-  dd.className = 'dropdown';
-  dd.innerHTML = options.map(o => `
-    <div class="dropdown-item" onclick="updateStatus(${rowIndex}, '${o.val}')">
-      <span class="dot ${o.cls}"></span>${o.label}
-    </div>`).join('');
-  btn.parentElement.style.position = 'relative';
-  btn.parentElement.appendChild(dd);
-  activeDropdown = dd;
-
-  setTimeout(() => document.addEventListener('click', function handler(e) {
-  if (!dd.contains(e.target)) { closeDropdown(); document.removeEventListener('click', handler); }
-}), 0);
+function closeSheet() {
+  document.getElementById('sheet-overlay').classList.remove('open');
+  document.getElementById('bottom-sheet').classList.remove('open');
 }
 
-function showReadDropdown(btn, rowIndex) {
-  closeDropdown();
-  const options = [
-    { label: 'Прочитано',     val: 'Да' },
-    { label: 'Не прочитано',  val: 'Нет' },
-  ];
-  const dd = document.createElement('div');
-  dd.className = 'dropdown';
-  dd.innerHTML = options.map(o => `
-    <div class="dropdown-item" onclick="updateRead(${rowIndex}, '${o.val}')">
-      ${o.label}
-    </div>`).join('');
-  btn.parentElement.style.position = 'relative';
-  btn.parentElement.appendChild(dd);
-  activeDropdown = dd;
-
-  setTimeout(() => document.addEventListener('click', closeDropdown, { once: true }), 0);
+function openStatusSheet(realIndex) {
+  openSheet('Изменить статус', [
+    { label: 'Без ответа',  dot: '#bbb',     action: `updateStatus(${realIndex}, 'Без ответа')` },
+    { label: 'Приглашение', dot: '#1d9e75',  action: `updateStatus(${realIndex}, 'Приглашение')` },
+    { label: 'Отказ',       dot: '#e24b4a',  action: `updateStatus(${realIndex}, 'Отказ')` },
+  ]);
 }
 
-async function updateStatus(rowIndex, newStatus) {
-  closeDropdown();
-  const realIndex = entries.length - 1 - rowIndex;
+function openReadSheet(realIndex) {
+  openSheet('Статус прочтения', [
+    { label: 'Прочитано',    action: `updateRead(${realIndex}, 'Да')` },
+    { label: 'Не прочитано', action: `updateRead(${realIndex}, 'Нет')` },
+  ]);
+}
+
+async function updateStatus(realIndex, newStatus) {
+  closeSheet();
   entries[realIndex].status = newStatus;
   renderAll();
-
-  const row = entries[realIndex];
   await fetch(`/api/entries/${realIndex}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -284,12 +273,10 @@ async function updateStatus(rowIndex, newStatus) {
   });
 }
 
-async function updateRead(rowIndex, newRead) {
-  closeDropdown();
-  const realIndex = entries.length - 1 - rowIndex;
+async function updateRead(realIndex, newRead) {
+  closeSheet();
   entries[realIndex].read = newRead;
   renderAll();
-
   await fetch(`/api/entries/${realIndex}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
@@ -303,7 +290,6 @@ function openForm() {
   document.getElementById('f-salary').value = '';
   document.getElementById('f-company').classList.remove('error');
   document.getElementById('f-role').classList.remove('error');
-  hideAutocomplete();
   setRead('yes'); setAns('wait');
   document.getElementById('screen-main').classList.remove('active');
   document.getElementById('screen-form').classList.add('active');
@@ -334,7 +320,6 @@ async function submitEntry() {
   const company = document.getElementById('f-company').value.trim();
   const role    = document.getElementById('f-role').value.trim();
   const salary  = document.getElementById('f-salary').value.trim();
-
   document.getElementById('f-company').classList.toggle('error', !company);
   document.getElementById('f-role').classList.toggle('error', !role);
   if (!company || !role) return;
@@ -373,9 +358,8 @@ function renderAll() {
   document.getElementById('cnt-inv').textContent  = inv;
   document.getElementById('cnt-rej').textContent  = rej;
   document.getElementById('cnt-wait').textContent = wait;
-
-  const sub = document.getElementById('hero-sub');
-  sub.textContent = total === 0 ? 'Начни добавлять отклики'
+  document.getElementById('hero-sub').textContent = total === 0
+    ? 'Начни добавлять отклики'
     : '+' + Math.round(inv/total*100) + '% конверсия в приглашения';
 
   const container = document.getElementById('rows-container');
@@ -384,9 +368,9 @@ function renderAll() {
     return;
   }
 
-  const badgeMap  = { 'Приглашение':'invite', 'Отказ':'reject', 'Без ответа':'wait' };
+  const badgeMap = { 'Приглашение':'invite', 'Отказ':'reject', 'Без ответа':'wait' };
 
-  container.innerHTML = [...entries].reverse().map((e, i) => `
+  container.innerHTML = [...entries].map((e, realIndex) => `
     <div class="card">
       <div class="card-top">
         <div class="card-icon">${e.company.charAt(0).toUpperCase()}</div>
@@ -397,13 +381,15 @@ function renderAll() {
         <div class="card-salary">${e.salary || '—'}</div>
       </div>
       <div class="card-badges">
-        <span class="badge ${badgeMap[e.status] || 'wait'}"
-          onclick="showStatusDropdown(this, ${i})">${e.status || 'Без ответа'} ▾</span>
-        <span class="badge ${e.read === 'Да' ? 'read' : 'unread'}"
-          onclick="showReadDropdown(this, ${i})">${e.read === 'Да' ? 'Прочитано' : 'Не прочитано'} ▾</span>
+        <span class="badge ${badgeMap[e.status] || 'wait'}" onclick="openStatusSheet(${realIndex})">
+          ${e.status || 'Без ответа'} ▾
+        </span>
+        <span class="badge ${e.read === 'Да' ? 'read' : 'unread'}" onclick="openReadSheet(${realIndex})">
+          ${e.read === 'Да' ? 'Прочитано' : 'Не прочитано'} ▾
+        </span>
       </div>
     </div>
-  `).join('');
+  `).reverse().join('');
 }
 
 loadEntries();
